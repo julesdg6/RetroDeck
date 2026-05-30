@@ -28,12 +28,22 @@ Use these host paths:
 - `/mnt/user/appdata/8bitdeck/saves` -> `/saves`
 - `/mnt/user/appdata/8bitdeck/states` -> `/states`
 
-## Quick start (Unraid Docker Compose Manager)
+## Quick start (Unraid 7 Docker Compose Manager)
 
-1. Copy `.env.example` to `.env` and set `MCP_AUTH_TOKEN`.
-2. In Unraid, open Docker Compose Manager and deploy this repository's `docker-compose.yml`.
-3. Keep `/mnt/user/roms` mounted read-only unless you explicitly need write access.
-4. Open services:
+1. Open an Unraid terminal and install the stack files into the Unraid 7 Compose Manager project directory:
+
+   ```bash
+   mkdir -p /boot/config/plugins/compose.manager/projects/RetroDeck
+   curl -fsSL https://raw.githubusercontent.com/julesdg6/RetroDeck/main/docker-compose.yml \
+     -o /boot/config/plugins/compose.manager/projects/RetroDeck/docker-compose.yml
+   curl -fsSL https://raw.githubusercontent.com/julesdg6/RetroDeck/main/.env.example \
+     -o /boot/config/plugins/compose.manager/projects/RetroDeck/.env
+   ```
+
+2. Edit `/boot/config/plugins/compose.manager/projects/RetroDeck/.env` and set `MCP_AUTH_TOKEN`.
+3. In Unraid 7, open Docker Compose Manager and deploy the `RetroDeck` stack.
+4. Keep `/mnt/user/roms` mounted read-only unless you explicitly need write access.
+5. Open services:
    - RomM: `http://<unraid-ip>:6502`
    - EmulatorJS: `http://<unraid-ip>:8086`
    - RetroArch web/noVNC: `http://<unraid-ip>:6510`
