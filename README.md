@@ -80,7 +80,7 @@ Base URL: `http://<host>:6581`
 - `GET /metadata/status`
 - `GET /logs?service=retroarch`
 
-`/admin/exec` is disabled unless `ALLOW_MCP_ADMIN=true`, and command names must be explicitly allow-listed in `MCP_ADMIN_ALLOWED_COMMANDS`.
+`/admin/exec` is disabled unless `ALLOW_MCP_ADMIN=true`, and actions must be allow-listed in `MCP_ADMIN_ALLOWED_COMMANDS` (e.g. `restart-retroarch,restart-romm`).
 
 ### Example MCP tool mapping
 

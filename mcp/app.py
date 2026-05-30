@@ -1,5 +1,4 @@
 import os
-import subprocess
 from pathlib import Path
 from typing import Literal
 
@@ -19,9 +18,9 @@ ADMIN_ALLOWED_COMMANDS = {
 }
 ROM_PATH = Path(os.getenv("ROM_PATH", "/roms"))
 BIOS_PATH = Path(os.getenv("BIOS_PATH", "/bios"))
-LOG_PATH = Path("/logs")
 RETROARCH_CONTAINER = os.getenv("RETROARCH_CONTAINER", "8bitdeck-retroarch")
 ROMM_CONTAINER = os.getenv("ROMM_CONTAINER", "8bitdeck-romm")
+SUNSHINE_CONTAINER = os.getenv("SUNSHINE_CONTAINER", "8bitdeck-sunshine")
 
 
 class StartSessionInput(BaseModel):
@@ -32,7 +31,7 @@ class StartSessionInput(BaseModel):
 
 
 class AdminCommand(BaseModel):
-    command: list[str]
+    action: Literal["restart-retroarch", "restart-romm", "restart-sunshine"]
 
 
 def _docker_client() -> docker.DockerClient:
@@ -50,11 +49,10 @@ def _auth(authorization: str | None = Header(default=None)) -> None:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
-def _safe_join(base: Path, relative: str) -> Path:
-    candidate = (base / relative).resolve()
-    if not candidate.is_relative_to(base.resolve()):
-        raise HTTPException(status_code=400, detail="Path traversal denied")
-    return candidate
+def _rom_index() -> dict[str, Path]:
+    if not ROM_PATH.exists():
+        return {}
+    return {p.relative_to(ROM_PATH).as_posix(): p for p in ROM_PATH.rglob("*") if p.is_file()}
 
 
 @app.get("/health", dependencies=[Depends(_auth)])
@@ -72,10 +70,10 @@ def platforms() -> dict[str, list[str]]:
 
 @app.get("/roms", dependencies=[Depends(_auth)])
 def roms(platform: str | None = Query(default=None)) -> dict[str, list[str]]:
-    base = ROM_PATH if platform is None else _safe_join(ROM_PATH, platform)
-    if not base.exists():
-        return {"roms": []}
-    files = [p.relative_to(ROM_PATH).as_posix() for p in base.rglob("*") if p.is_file()]
+    files = sorted(_rom_index())
+    if platform is None:
+        return {"roms": files}
+    files = [path for path in files if path.split("/", 1)[0] == platform]
     return {"roms": sorted(files)}
 
 
@@ -104,8 +102,8 @@ def session_status() -> dict[str, str]:
 
 @app.post("/session/start", dependencies=[Depends(_auth)])
 def session_start(payload: StartSessionInput) -> dict[str, str]:
-    rom_path = _safe_join(ROM_PATH, payload.rom)
-    if not rom_path.exists():
+    rom_path = _rom_index().get(payload.rom)
+    if rom_path is None:
         raise HTTPException(status_code=404, detail="ROM not found")
 
     client = _docker_client()
@@ -168,26 +166,42 @@ def metadata_status() -> dict[str, str]:
 
 @app.get("/logs", dependencies=[Depends(_auth)])
 def logs(service: str = Query(pattern="^[a-zA-Z0-9_-]+$"), lines: int = Query(default=200, ge=1, le=2000)) -> dict[str, str]:
-    log_file = _safe_join(LOG_PATH, f"{service}.log")
-    if not log_file.exists() or not log_file.is_file():
-        raise HTTPException(status_code=404, detail="Log file not found")
+    service_map = {
+        "retroarch": RETROARCH_CONTAINER,
+        "romm": ROMM_CONTAINER,
+        "sunshine": SUNSHINE_CONTAINER,
+        "mcp": "8bitdeck-mcp",
+    }
+    container_name = service_map.get(service)
+    if not container_name:
+        raise HTTPException(status_code=404, detail="Service not allowed")
 
-    with log_file.open("r", encoding="utf-8", errors="replace") as handle:
-        tail = handle.readlines()[-lines:]
-    return {"service": service, "log": "".join(tail)}
+    client = _docker_client()
+    try:
+        container = client.containers.get(container_name)
+    except NotFound as exc:
+        raise HTTPException(status_code=404, detail="Container not found") from exc
+
+    raw_logs = container.logs(tail=lines)
+    return {"service": service, "log": raw_logs.decode("utf-8", errors="replace")}
 
 
 @app.post("/admin/exec", dependencies=[Depends(_auth)])
 def admin_exec(payload: AdminCommand) -> dict[str, str]:
     if not ALLOW_MCP_ADMIN:
         raise HTTPException(status_code=403, detail="Admin mode disabled")
-    if not payload.command:
-        raise HTTPException(status_code=400, detail="No command provided")
-    if payload.command[0] not in ADMIN_ALLOWED_COMMANDS:
-        raise HTTPException(status_code=403, detail="Command not allowed")
-    result = subprocess.run(payload.command, capture_output=True, text=True, check=False)
-    return {
-        "stdout": result.stdout,
-        "stderr": result.stderr,
-        "returncode": str(result.returncode),
+    if payload.action not in ADMIN_ALLOWED_COMMANDS:
+        raise HTTPException(status_code=403, detail="Action not allowed")
+
+    action_map = {
+        "restart-retroarch": RETROARCH_CONTAINER,
+        "restart-romm": ROMM_CONTAINER,
+        "restart-sunshine": SUNSHINE_CONTAINER,
     }
+    target = action_map[payload.action]
+    client = _docker_client()
+    try:
+        client.containers.get(target).restart()
+    except NotFound as exc:
+        raise HTTPException(status_code=404, detail="Container not found") from exc
+    return {"status": "ok", "action": payload.action, "target": target}
