@@ -50,6 +50,15 @@ Use these host paths:
    - Sunshine admin: `http://<unraid-ip>:6560`
    - MCP API: `http://<unraid-ip>:6581`
 
+## Where is the Unraid template?
+
+`docker-compose.yml` in the repository root is the Unraid wrapper/template for this project.
+
+- On Unraid 7, the supported install path is a single Docker Compose Manager project named `RetroDeck`.
+- That one project wraps all five RetroDeck service containers: RomM, EmulatorJS, RetroArch, Sunshine, and MCP.
+- There is no separate Community Apps XML template in this repository right now; the Compose Manager stack is the documented single-entry Unraid deployment.
+- If you want the whole app in one place on Unraid, copy `docker-compose.yml` and `.env` into `/boot/config/plugins/compose.manager/projects/RetroDeck/` and deploy that stack.
+
 ## 8-bit themed default ports
 
 - `ROMM_PORT=6502`
@@ -136,4 +145,4 @@ Configure your agent/tool client with:
 
 - Browser play uses RomM/EmulatorJS.
 - Shared-screen multiplayer starts RetroArch and streams with Sunshine/Moonlight.
-- Suggested future stretch goals: RomM shared-session button, Discord invite generation, save-state sharing, per-friend controller mapping, cabinet mode, RetroAchievements, Tailscale sidecar, optional WebRTC, and Unraid XML template generation.
+- Suggested future stretch goals: RomM shared-session button, Discord invite generation, save-state sharing, per-friend controller mapping, cabinet mode, RetroAchievements, Tailscale sidecar, and optional WebRTC.
