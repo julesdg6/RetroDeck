@@ -52,7 +52,7 @@ Use these host paths:
 
 ## Where is the Unraid template?
 
-`/tmp/workspace/julesdg6/RetroDeck/docker-compose.yml` is the Unraid wrapper/template for this project.
+`docker-compose.yml` in the repository root is the Unraid wrapper/template for this project.
 
 - On Unraid 7, the supported install path is a single Docker Compose Manager project named `RetroDeck`.
 - That one project wraps all five RetroDeck service containers: RomM, EmulatorJS, RetroArch, Sunshine, and MCP.
