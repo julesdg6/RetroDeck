@@ -1,0 +1,87 @@
+services:
+  romm:
+    image: rommapp/romm:latest
+    container_name: 8bitdeck-romm
+    restart: unless-stopped
+    ports:
+      - "${ROMM_PORT:-6502}:8080"
+    environment:
+      - TZ=${TZ:-Europe/London}
+    volumes:
+      - /mnt/user/roms:/roms:ro
+      - /mnt/user/appdata/8bitdeck/romm:/romm/config
+      - /mnt/user/appdata/8bitdeck/resources:/romm/resources
+      - /mnt/user/appdata/8bitdeck/assets:/romm/assets
+
+  emulatorjs:
+    image: lscr.io/linuxserver/emulatorjs:latest
+    container_name: 8bitdeck-emulatorjs
+    restart: unless-stopped
+    ports:
+      - "${EMULATORJS_PORT:-8086}:3000"
+      - "8087:80"
+    environment:
+      - PUID=${PUID:-99}
+      - PGID=${PGID:-100}
+      - TZ=${TZ:-Europe/London}
+    volumes:
+      - /mnt/user/appdata/8bitdeck/emulatorjs:/config
+      - /mnt/user/roms:/data/roms:ro
+
+  retroarch:
+    image: lscr.io/linuxserver/retroarch:latest
+    container_name: 8bitdeck-retroarch
+    restart: unless-stopped
+    ports:
+      - "${RETROARCH_PORT:-6510}:3000"
+    environment:
+      - PUID=${PUID:-99}
+      - PGID=${PGID:-100}
+      - TZ=${TZ:-Europe/London}
+    volumes:
+      - /mnt/user/appdata/8bitdeck/retroarch:/config
+      - /mnt/user/roms:/roms:ro
+      - /mnt/user/appdata/8bitdeck/bios:/bios
+      - /mnt/user/appdata/8bitdeck/saves:/saves
+      - /mnt/user/appdata/8bitdeck/states:/states
+    devices:
+      - /dev/dri:/dev/dri
+
+  sunshine:
+    image: lizardbyte/sunshine:latest
+    container_name: 8bitdeck-sunshine
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - TZ=${TZ:-Europe/London}
+    volumes:
+      - /mnt/user/appdata/8bitdeck/sunshine:/config
+      - /mnt/user/appdata/8bitdeck/retroarch:/retroarch-config
+      - /mnt/user/roms:/roms:ro
+    depends_on:
+      - retroarch
+
+  mcp:
+    build: ./mcp
+    container_name: 8bitdeck-mcp
+    restart: unless-stopped
+    ports:
+      - "${MCP_PORT:-6581}:6581"
+    environment:
+      - TZ=${TZ:-Europe/London}
+      - MCP_PORT=6581
+      - MCP_AUTH_TOKEN=${MCP_AUTH_TOKEN:-change-me}
+      - ALLOW_MCP_ADMIN=${ALLOW_MCP_ADMIN:-false}
+      - MCP_ADMIN_ALLOWED_COMMANDS=${MCP_ADMIN_ALLOWED_COMMANDS:-}
+      - ROM_PATH=${ROM_PATH:-/roms}
+      - BIOS_PATH=${BIOS_PATH:-/bios}
+      - SAVES_PATH=${SAVES_PATH:-/saves}
+      - STATES_PATH=${STATES_PATH:-/states}
+      - RETROARCH_CONTAINER=${RETROARCH_CONTAINER:-8bitdeck-retroarch}
+      - ROMM_CONTAINER=${ROMM_CONTAINER:-8bitdeck-romm}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/user/roms:/roms:ro
+      - /mnt/user/appdata/8bitdeck/mcp:/config
+      - /mnt/user/appdata/8bitdeck/logs:/logs
+      - /mnt/user/appdata/8bitdeck/bios:/bios:ro
