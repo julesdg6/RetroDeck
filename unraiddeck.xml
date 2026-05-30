@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <Container version="2">
-  <Name>RetroDeck</Name>
+  <Name>UnraidDeck</Name>
   <Repository>rommapp/romm:latest</Repository>
   <Registry>https://hub.docker.com/r/rommapp/romm</Registry>
   <Network>bridge</Network>
   <MyIP/>
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
-  <Support>https://github.com/julesdg6/RetroDeck/issues</Support>
-  <Project>https://github.com/julesdg6/RetroDeck</Project>
-  <Overview>RetroDeck is an Unraid-focused Docker stack for browsing, launching, streaming, and managing a server-hosted retro ROM library.&#xD;&#xD;This template deploys the RomM container only (the ROM manager front-end). If you want all five RetroDeck services (RomM, EmulatorJS, RetroArch, Sunshine, MCP API) running together in a single step, use the Docker Compose Manager method instead — see https://github.com/julesdg6/RetroDeck for the complete docker-compose.yml and quick-start instructions.&#xD;&#xD;Legal notice: you must only use ROMs and BIOS files you legally own. This project does not ship ROMs, BIOS files, artwork packs, or unlicensed game databases.</Overview>
+  <Support>https://github.com/julesdg6/UnraidDeck/issues</Support>
+  <Project>https://github.com/julesdg6/UnraidDeck</Project>
+  <Overview>UnraidDeck is an Unraid-focused Docker stack for browsing, launching, streaming, and managing a server-hosted retro ROM library.&#xD;&#xD;This template deploys the RomM container only (the ROM manager front-end). If you want all five UnraidDeck services (RomM, EmulatorJS, RetroArch, Sunshine, MCP API) running together in a single step, use the Docker Compose Manager method instead — see https://github.com/julesdg6/UnraidDeck for the complete docker-compose.yml and quick-start instructions.&#xD;&#xD;Legal notice: you must only use ROMs and BIOS files you legally own. This project does not ship ROMs, BIOS files, artwork packs, or unlicensed game databases.</Overview>
   <Category>MediaApp:Other GameServer</Category>
   <WebUI>http://[IP]:[PORT:6502]/</WebUI>
-  <TemplateURL>https://raw.githubusercontent.com/julesdg6/RetroDeck/main/retrodeck.xml</TemplateURL>
+  <TemplateURL>https://raw.githubusercontent.com/julesdg6/UnraidDeck/main/unraiddeck.xml</TemplateURL>
   <Icon>https://raw.githubusercontent.com/rommapp/romm/release/frontend/assets/isotipo.png</Icon>
   <ExtraParams/>
   <PostArgs/>
@@ -32,19 +32,19 @@
           Description="Host path containing your ROM library (mounted read-only)." Type="Path"
           Display="always" Required="true" Mask="false">/mnt/user/roms</Config>
 
-  <Config Name="RomM config" Target="/romm/config" Default="/mnt/user/appdata/8bitdeck/romm"
+  <Config Name="RomM config" Target="/romm/config" Default="/mnt/user/appdata/unraiddeck/romm"
           Mode="rw" Description="Persistent config and database for RomM." Type="Path"
-          Display="always" Required="true" Mask="false">/mnt/user/appdata/8bitdeck/romm</Config>
+          Display="always" Required="true" Mask="false">/mnt/user/appdata/unraiddeck/romm</Config>
 
   <Config Name="RomM resources" Target="/romm/resources"
-          Default="/mnt/user/appdata/8bitdeck/resources" Mode="rw"
+          Default="/mnt/user/appdata/unraiddeck/resources" Mode="rw"
           Description="Artwork and metadata resources downloaded by RomM." Type="Path"
-          Display="advanced" Required="false" Mask="false">/mnt/user/appdata/8bitdeck/resources</Config>
+          Display="advanced" Required="false" Mask="false">/mnt/user/appdata/unraiddeck/resources</Config>
 
   <Config Name="RomM assets" Target="/romm/assets"
-          Default="/mnt/user/appdata/8bitdeck/assets" Mode="rw"
+          Default="/mnt/user/appdata/unraiddeck/assets" Mode="rw"
           Description="User-uploaded assets for RomM." Type="Path"
-          Display="advanced" Required="false" Mask="false">/mnt/user/appdata/8bitdeck/assets</Config>
+          Display="advanced" Required="false" Mask="false">/mnt/user/appdata/unraiddeck/assets</Config>
 
   <!-- Environment variables -->
   <Config Name="Timezone" Target="TZ" Default="Europe/London" Mode=""

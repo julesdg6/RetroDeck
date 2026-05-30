@@ -7,7 +7,7 @@ from docker.errors import DockerException, NotFound
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from pydantic import BaseModel
 
-app = FastAPI(title="8BitDeck MCP Server", version="0.1.0")
+app = FastAPI(title="UnraidDeck MCP Server", version="0.1.0")
 
 MCP_AUTH_TOKEN = os.getenv("MCP_AUTH_TOKEN", "change-me")
 ALLOW_MCP_ADMIN = os.getenv("ALLOW_MCP_ADMIN", "false").lower() == "true"
@@ -18,9 +18,9 @@ ADMIN_ALLOWED_COMMANDS = {
 }
 ROM_PATH = Path(os.getenv("ROM_PATH", "/roms"))
 BIOS_PATH = Path(os.getenv("BIOS_PATH", "/bios"))
-RETROARCH_CONTAINER = os.getenv("RETROARCH_CONTAINER", "8bitdeck-retroarch")
-ROMM_CONTAINER = os.getenv("ROMM_CONTAINER", "8bitdeck-romm")
-SUNSHINE_CONTAINER = os.getenv("SUNSHINE_CONTAINER", "8bitdeck-sunshine")
+RETROARCH_CONTAINER = os.getenv("RETROARCH_CONTAINER", "unraiddeck-retroarch")
+ROMM_CONTAINER = os.getenv("ROMM_CONTAINER", "unraiddeck-romm")
+SUNSHINE_CONTAINER = os.getenv("SUNSHINE_CONTAINER", "unraiddeck-sunshine")
 
 
 class StartSessionInput(BaseModel):
@@ -170,7 +170,7 @@ def logs(service: str = Query(pattern="^[a-zA-Z0-9_-]+$"), lines: int = Query(de
         "retroarch": RETROARCH_CONTAINER,
         "romm": ROMM_CONTAINER,
         "sunshine": SUNSHINE_CONTAINER,
-        "mcp": "8bitdeck-mcp",
+        "mcp": "unraiddeck-mcp",
     }
     container_name = service_map.get(service)
     if not container_name:
