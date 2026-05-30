@@ -1,6 +1,6 @@
-# RetroDeck
+# UnraidDeck
 
-RetroDeck is an Unraid-focused Docker stack for browsing, launching, streaming, and managing a server-hosted retro ROM library.
+UnraidDeck is an Unraid-focused Docker stack for browsing, launching, streaming, and managing a server-hosted retro ROM library.
 
 ## What it includes
 
@@ -8,7 +8,7 @@ RetroDeck is an Unraid-focused Docker stack for browsing, launching, streaming, 
 - **EmulatorJS** (`8086`) for lightweight browser play (NES/SNES/GB/GBA/Mega Drive, etc.).
 - **RetroArch session container** (`6510`) for shared-screen/heavier sessions.
 - **Sunshine** (`6560` web admin; host-network streaming ports) for Moonlight streaming.
-- **8BitDeck MCP server** (`6581`) for safe agent automation.
+- **UnraidDeck MCP server** (`6581`) for safe agent automation.
 
 ## Legal notice
 
@@ -19,31 +19,31 @@ You must only use ROMs/BIOS files you legally own. This project does **not** shi
 Use these host paths:
 
 - `/mnt/user/roms` -> `/roms:ro`
-- `/mnt/user/appdata/8bitdeck/romm` -> `/config/romm` / RomM config mount
-- `/mnt/user/appdata/8bitdeck/emulatorjs` -> `/config/emulatorjs`
-- `/mnt/user/appdata/8bitdeck/retroarch` -> `/config/retroarch`
-- `/mnt/user/appdata/8bitdeck/sunshine` -> `/config/sunshine`
-- `/mnt/user/appdata/8bitdeck/mcp` -> `/config/mcp`
-- `/mnt/user/appdata/8bitdeck/bios` -> `/bios`
-- `/mnt/user/appdata/8bitdeck/saves` -> `/saves`
-- `/mnt/user/appdata/8bitdeck/states` -> `/states`
+- `/mnt/user/appdata/unraiddeck/romm` -> `/config/romm` / RomM config mount
+- `/mnt/user/appdata/unraiddeck/emulatorjs` -> `/config/emulatorjs`
+- `/mnt/user/appdata/unraiddeck/retroarch` -> `/config/retroarch`
+- `/mnt/user/appdata/unraiddeck/sunshine` -> `/config/sunshine`
+- `/mnt/user/appdata/unraiddeck/mcp` -> `/config/mcp`
+- `/mnt/user/appdata/unraiddeck/bios` -> `/bios`
+- `/mnt/user/appdata/unraiddeck/saves` -> `/saves`
+- `/mnt/user/appdata/unraiddeck/states` -> `/states`
 
 ## Quick start — all five services in one step (recommended)
 
-The recommended install path deploys the complete RetroDeck stack (RomM, EmulatorJS, RetroArch, Sunshine, and MCP) in a single operation using the Unraid 7 Docker Compose Manager plugin. No separate Docker Manager template step is required.
+The recommended install path deploys the complete UnraidDeck stack (RomM, EmulatorJS, RetroArch, Sunshine, and MCP) in a single operation using the Unraid 7 Docker Compose Manager plugin. No separate Docker Manager template step is required.
 
 1. Open an Unraid terminal and install the stack files:
 
    ```bash
-   mkdir -p /boot/config/plugins/compose.manager/projects/RetroDeck
-   curl -fsSL https://raw.githubusercontent.com/julesdg6/RetroDeck/main/docker-compose.yml \
-     -o /boot/config/plugins/compose.manager/projects/RetroDeck/docker-compose.yml
-   curl -fsSL https://raw.githubusercontent.com/julesdg6/RetroDeck/main/.env.example \
-     -o /boot/config/plugins/compose.manager/projects/RetroDeck/.env
+   mkdir -p /boot/config/plugins/compose.manager/projects/UnraidDeck
+   curl -fsSL https://raw.githubusercontent.com/julesdg6/UnraidDeck/main/docker-compose.yml \
+     -o /boot/config/plugins/compose.manager/projects/UnraidDeck/docker-compose.yml
+   curl -fsSL https://raw.githubusercontent.com/julesdg6/UnraidDeck/main/.env.example \
+     -o /boot/config/plugins/compose.manager/projects/UnraidDeck/.env
    ```
 
-2. Edit `/boot/config/plugins/compose.manager/projects/RetroDeck/.env` and set `MCP_AUTH_TOKEN`.
-3. In Unraid 7, open **Docker Compose Manager** and deploy the `RetroDeck` stack. All five containers start together.
+2. Edit `/boot/config/plugins/compose.manager/projects/UnraidDeck/.env` and set `MCP_AUTH_TOKEN`.
+3. In Unraid 7, open **Docker Compose Manager** and deploy the `UnraidDeck` stack. All five containers start together.
 4. Keep `/mnt/user/roms` mounted read-only unless you explicitly need write access.
 5. Open services:
    - RomM: `http://<unraid-ip>:6502`
@@ -52,18 +52,18 @@ The recommended install path deploys the complete RetroDeck stack (RomM, Emulato
    - Sunshine admin: `http://<unraid-ip>:6560`
    - MCP API: `http://<unraid-ip>:6581`
 
-## Unraid Docker Manager template (retrodeck.xml) — optional, RomM only
+## Unraid Docker Manager template (unraiddeck.xml) — optional, RomM only
 
-A Community Applications–compatible Docker template is provided at `retrodeck.xml` in the repository root. **This template only deploys the RomM container** — it is an optional convenience for users who prefer the classic Docker Manager UI for RomM and do not need the rest of the stack. If you want all five services, use the Compose Manager method above instead.
+A Community Applications–compatible Docker template is provided at `unraiddeck.xml` in the repository root. **This template only deploys the RomM container** — it is an optional convenience for users who prefer the classic Docker Manager UI for RomM and do not need the rest of the stack. If you want all five services, use the Compose Manager method above instead.
 
 To add the template to the Docker Manager Add Container dialog:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/julesdg6/RetroDeck/main/retrodeck.xml \
-  -o /boot/config/plugins/dockerMan/templates-user/retrodeck.xml
+curl -fsSL https://raw.githubusercontent.com/julesdg6/UnraidDeck/main/unraiddeck.xml \
+  -o /boot/config/plugins/dockerMan/templates-user/unraiddeck.xml
 ```
 
-## 8-bit themed default ports
+## Default ports
 
 - `ROMM_PORT=6502`
 - `EMULATORJS_PORT=8086`
@@ -107,15 +107,15 @@ Base URL: `http://<host>:6581`
 
 ### Example MCP tool mapping
 
-- `8bitdeck.health`
-- `8bitdeck.list_platforms`
-- `8bitdeck.search_roms`
-- `8bitdeck.start_game`
-- `8bitdeck.stop_game`
-- `8bitdeck.session_status`
-- `8bitdeck.rescan_library`
-- `8bitdeck.check_bios`
-- `8bitdeck.read_logs`
+- `unraiddeck.health`
+- `unraiddeck.list_platforms`
+- `unraiddeck.search_roms`
+- `unraiddeck.start_game`
+- `unraiddeck.stop_game`
+- `unraiddeck.session_status`
+- `unraiddeck.rescan_library`
+- `unraiddeck.check_bios`
+- `unraiddeck.read_logs`
 
 ### `start_game` payload example
 
@@ -137,7 +137,7 @@ Configure your agent/tool client with:
 
 ## Troubleshooting
 
-- **Missing BIOS**: call `GET /bios/check`, then add missing files to `/mnt/user/appdata/8bitdeck/bios`.
+- **Missing BIOS**: call `GET /bios/check`, then add missing files to `/mnt/user/appdata/unraiddeck/bios`.
 - **Controller not detected**: verify USB/Bluetooth passthrough and RetroArch input driver settings.
 - **Black screen in Sunshine**: confirm `/dev/dri` mapping and GPU/iGPU availability; check Sunshine logs.
 - **Audio delay**: use wired network where possible, tune Moonlight bitrate/FPS/audio buffer.
