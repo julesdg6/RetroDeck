@@ -9,7 +9,7 @@
   <Privileged>false</Privileged>
   <Support>https://github.com/julesdg6/RetroDeck/issues</Support>
   <Project>https://github.com/julesdg6/RetroDeck</Project>
-  <Overview>RetroDeck is an Unraid-focused Docker stack for browsing, launching, streaming, and managing a server-hosted retro ROM library.&#xD;&#xD;This template deploys RomM, the ROM manager front-end. The full RetroDeck stack (EmulatorJS, RetroArch, Sunshine, MCP API) should be deployed alongside this container — see https://github.com/julesdg6/RetroDeck for the complete docker-compose.yml.&#xD;&#xD;Legal notice: you must only use ROMs and BIOS files you legally own. This project does not ship ROMs, BIOS files, artwork packs, or unlicensed game databases.</Overview>
+  <Overview>RetroDeck is an Unraid-focused Docker stack for browsing, launching, streaming, and managing a server-hosted retro ROM library.&#xD;&#xD;This template deploys the RomM container only (the ROM manager front-end). If you want all five RetroDeck services (RomM, EmulatorJS, RetroArch, Sunshine, MCP API) running together in a single step, use the Docker Compose Manager method instead — see https://github.com/julesdg6/RetroDeck for the complete docker-compose.yml and quick-start instructions.&#xD;&#xD;Legal notice: you must only use ROMs and BIOS files you legally own. This project does not ship ROMs, BIOS files, artwork packs, or unlicensed game databases.</Overview>
   <Category>MediaApp:Other GameServer</Category>
   <WebUI>http://[IP]:[PORT:6502]/</WebUI>
   <TemplateURL>https://raw.githubusercontent.com/julesdg6/RetroDeck/main/retrodeck.xml</TemplateURL>

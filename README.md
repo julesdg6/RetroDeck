@@ -28,9 +28,11 @@ Use these host paths:
 - `/mnt/user/appdata/8bitdeck/saves` -> `/saves`
 - `/mnt/user/appdata/8bitdeck/states` -> `/states`
 
-## Quick start (Unraid 7 Docker Compose Manager)
+## Quick start — all five services in one step (recommended)
 
-1. Open an Unraid terminal and install the stack files into the Unraid 7 Compose Manager project directory:
+The recommended install path deploys the complete RetroDeck stack (RomM, EmulatorJS, RetroArch, Sunshine, and MCP) in a single operation using the Unraid 7 Docker Compose Manager plugin. No separate Docker Manager template step is required.
+
+1. Open an Unraid terminal and install the stack files:
 
    ```bash
    mkdir -p /boot/config/plugins/compose.manager/projects/RetroDeck
@@ -41,7 +43,7 @@ Use these host paths:
    ```
 
 2. Edit `/boot/config/plugins/compose.manager/projects/RetroDeck/.env` and set `MCP_AUTH_TOKEN`.
-3. In Unraid 7, open Docker Compose Manager and deploy the `RetroDeck` stack.
+3. In Unraid 7, open **Docker Compose Manager** and deploy the `RetroDeck` stack. All five containers start together.
 4. Keep `/mnt/user/roms` mounted read-only unless you explicitly need write access.
 5. Open services:
    - RomM: `http://<unraid-ip>:6502`
@@ -50,24 +52,16 @@ Use these host paths:
    - Sunshine admin: `http://<unraid-ip>:6560`
    - MCP API: `http://<unraid-ip>:6581`
 
-## Unraid Docker Manager template (retrodeck.xml)
+## Unraid Docker Manager template (retrodeck.xml) — optional, RomM only
 
-A Community Applications–compatible Docker template is provided at `retrodeck.xml` in the repository root. Copy it to the Unraid Docker Manager user-templates directory and it will appear in the **Add Container** dialog:
+A Community Applications–compatible Docker template is provided at `retrodeck.xml` in the repository root. **This template only deploys the RomM container** — it is an optional convenience for users who prefer the classic Docker Manager UI for RomM and do not need the rest of the stack. If you want all five services, use the Compose Manager method above instead.
+
+To add the template to the Docker Manager Add Container dialog:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/julesdg6/RetroDeck/main/retrodeck.xml \
   -o /boot/config/plugins/dockerMan/templates-user/retrodeck.xml
 ```
-
-The template configures the **RomM** container (the main web UI, port `6502`) with all required volume paths and environment variables pre-filled. After adding it via Docker Manager, deploy the rest of the stack with the Compose Manager method below so all five services are running together.
-
-## Where is the Unraid Compose stack?
-
-`docker-compose.yml` in the repository root is the full Unraid Compose Manager stack for this project.
-
-- On Unraid 7, the supported install path is a single Docker Compose Manager project named `RetroDeck`.
-- That one project wraps all five RetroDeck service containers: RomM, EmulatorJS, RetroArch, Sunshine, and MCP.
-- If you want the whole stack running in one step, copy `docker-compose.yml` and `.env` into `/boot/config/plugins/compose.manager/projects/RetroDeck/` and deploy that stack.
 
 ## 8-bit themed default ports
 
